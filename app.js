@@ -1213,12 +1213,38 @@ class App {
     // Update Risk Fusion Engine Transparency Section
     this.updateRiskFusion(htssData, weather, city);
 
-    // 3D Weather Icon Update
+    // 3D Weather Icon Dynamic Selection based on Temperature & Atmospheric Conditions
     const hero3dIcon = document.getElementById('hero-3d-icon');
     if (hero3dIcon) {
-      hero3dIcon.src = (htssData.category === 'Extreme' || weather.temperature > 43)
-        ? 'assets/weather_3d_storm.jpg'
-        : 'assets/weather_3d_sun_cloud.jpg';
+      const temp = weather.temperature;
+      const rh = weather.humidity;
+      const code = weather.weatherCode || 0;
+
+      // 1. Rainy / Precipitation Condition -> Water drops cloud asset
+      if ((code >= 50 && code <= 67) || (code >= 80 && code <= 82) || (rh > 85 && temp < 32)) {
+        hero3dIcon.src = 'assets/weather_3d_rain.jpg';
+        hero3dIcon.alt = '3D Rain Cloud with Water Drops';
+      }
+      // 2. Extreme Storm / Severe Heatwave Emergency -> Storm lightning asset
+      else if (htssData.category === 'Extreme' || temp >= 44 || code >= 95) {
+        hero3dIcon.src = 'assets/weather_3d_storm.jpg';
+        hero3dIcon.alt = '3D Severe Storm Cloud';
+      }
+      // 3. High Temperature / Hot Sunny Heatwave -> Glowing Sun asset
+      else if (temp >= 38 || htssData.category === 'High') {
+        hero3dIcon.src = 'assets/weather_3d_sun.jpg';
+        hero3dIcon.alt = '3D Glowing Sun';
+      }
+      // 4. Low / Mild Temperature -> Soft Clouds asset
+      else if (temp <= 25 || rh > 75) {
+        hero3dIcon.src = 'assets/weather_3d_clouds.jpg';
+        hero3dIcon.alt = '3D Soft Clouds';
+      }
+      // 5. Normal / Moderate Day -> Sun & Cloud asset
+      else {
+        hero3dIcon.src = 'assets/weather_3d_sun_cloud.jpg';
+        hero3dIcon.alt = '3D Sun and Cloud';
+      }
     }
 
     // Update Detailed Technical Metrics & Bento Cards
