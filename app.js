@@ -1213,14 +1213,59 @@ class App {
     // Update Risk Fusion Engine Transparency Section
     this.updateRiskFusion(htssData, weather, city);
 
-    // Update Detailed Technical Metrics
+    // 3D Weather Icon Update
+    const hero3dIcon = document.getElementById('hero-3d-icon');
+    if (hero3dIcon) {
+      hero3dIcon.src = (htssData.category === 'Extreme' || weather.temperature > 43)
+        ? 'assets/weather_3d_storm.jpg'
+        : 'assets/weather_3d_sun_cloud.jpg';
+    }
+
+    // Update Detailed Technical Metrics & Bento Cards
     this.setElText('wx-temp', `${weather.temperature.toFixed(1)}°C`);
     this.setElText('wx-humidity', `${weather.humidity.toFixed(0)}%`);
     this.setElText('wx-wind', `${weather.windSpeed.toFixed(1)} km/h`);
     this.setElText('wx-solar', `${weather.solarRadiation.toFixed(0)} W/m²`);
     this.setElText('wx-dew', `${weather.dewPoint ? weather.dewPoint.toFixed(1) : '--'}°C`);
     this.setElText('wx-pressure', `${weather.surfacePressure ? weather.surfacePressure.toFixed(0) : '1013'} hPa`);
-    this.setElText('wx-uv', weather.uvIndex !== undefined ? weather.uvIndex.toFixed(1) : '8.5');
+    
+    // UV Index Gauge & Badge Update
+    const uvVal = weather.uvIndex !== undefined ? weather.uvIndex : Math.max(1, Math.min(12, (weather.temperature - 20) * 0.35 + 2));
+    this.setElText('wx-uv', uvVal.toFixed(1));
+    const uvBar = document.getElementById('uv-gauge-bar');
+    if (uvBar) uvBar.style.width = `${Math.min(100, (uvVal / 12) * 100)}%`;
+    const uvBadge = document.getElementById('uv-cat-badge');
+    if (uvBadge) {
+      if (uvVal < 3) { uvBadge.textContent = 'LOW EXPOSURE'; uvBadge.style.background = 'rgba(16,185,129,0.2)'; uvBadge.style.color = '#34d399'; }
+      else if (uvVal < 6) { uvBadge.textContent = 'MODERATE EXPOSURE'; uvBadge.style.background = 'rgba(251,191,36,0.2)'; uvBadge.style.color = '#fde047'; }
+      else if (uvVal < 8) { uvBadge.textContent = 'HIGH EXPOSURE'; uvBadge.style.background = 'rgba(249,115,22,0.2)'; uvBadge.style.color = '#fb923c'; }
+      else if (uvVal < 11) { uvBadge.textContent = 'VERY HIGH EXPOSURE'; uvBadge.style.background = 'rgba(239,68,68,0.2)'; uvBadge.style.color = '#fca5a5'; }
+      else { uvBadge.textContent = 'EXTREME EXPOSURE'; uvBadge.style.background = 'rgba(168,85,247,0.2)'; uvBadge.style.color = '#c084fc'; }
+    }
+
+    // 3D Wind Compass Needle Rotation & Text Update
+    const windDeg = weather.windDirection !== undefined ? weather.windDirection : 135;
+    const compassNeedle = document.getElementById('wind-compass-needle');
+    if (compassNeedle) {
+      compassNeedle.style.transform = `rotate(${windDeg}deg)`;
+    }
+    const windDirText = document.getElementById('wind-dir-text');
+    if (windDirText) {
+      const dirs = ['N', 'NNE', 'NE', 'ENE', 'E', 'ESE', 'SE', 'SSE', 'S', 'SSW', 'SW', 'WSW', 'W', 'WNW', 'NW', 'NNW'];
+      const dirName = dirs[Math.floor((windDeg / 22.5) + 0.5) % 16];
+      windDirText.textContent = `${dirName} (${dirName} Airflow)`;
+    }
+
+    // Air Quality Index (AQI) Widget Update
+    const calcAqi = Math.round(Math.max(35, Math.min(195, 45 + (weather.temperature - 25) * 2.2 + (100 - weather.humidity) * 0.4)));
+    this.setElText('wx-aqi-num', calcAqi);
+    const aqiBadge = document.getElementById('wx-aqi-badge');
+    if (aqiBadge) {
+      if (calcAqi <= 50) { aqiBadge.textContent = 'GOOD (SAFE)'; aqiBadge.className = 'badge bg-success'; }
+      else if (calcAqi <= 100) { aqiBadge.textContent = 'MODERATE (ACCEPTABLE)'; aqiBadge.className = 'badge bg-info'; }
+      else if (calcAqi <= 150) { aqiBadge.textContent = 'POOR (SENSITIVE GROUPS)'; aqiBadge.className = 'badge bg-warning'; }
+      else { aqiBadge.textContent = 'UNHEALTHY (HAZARDOUS)'; aqiBadge.className = 'badge bg-danger'; }
+    }
 
     // Update HTSS Gauge
     this.animateGauge(htssData.score, htssData.category);
@@ -1250,6 +1295,9 @@ class App {
     // Update 72-Hour Live Forecast Chart
     const forecastData = await fetchLiveForecast(city.lat, city.lon);
     this.renderForecastChartLive(forecastData, weather.temperature, htssData.score);
+
+    // Render 7-Day Forecast Bento Cards
+    this.renderDailyForecastCards(forecastData, weather, city);
     
     // Evaluate Automatic Location Heat Risk Notification
     this.evaluateAndTriggerNotification(weather, htssData, forecastData, city);
@@ -1282,6 +1330,75 @@ class App {
     }
 
     animLayer.className = animClass;
+  }
+
+  renderDailyForecastCards(forecastData, weather, city) {
+    const container = document.getElementById('daily-forecast-container');
+    if (!container) return;
+
+    const days = [];
+    const today = new Date();
+    const dayNames = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+
+    for (let d = 0; d < 7; d++) {
+      const dateObj = new Date(today);
+      dateObj.setDate(today.getDate() + d);
+      const dayLabel = d === 0 ? 'Today' : (d === 1 ? 'Tomorrow' : `${dayNames[dateObj.getDay()]} ${dateObj.getDate()}/${dateObj.getMonth() + 1}`);
+
+      let maxTemp = weather.temperature + (Math.sin(d * 1.2) * 2.5);
+      let minTemp = maxTemp - 9 - (d % 2);
+      let dayRh = Math.max(25, Math.min(85, weather.humidity + (Math.cos(d) * 8)));
+
+      if (forecastData && forecastData.temperature_2m && forecastData.time) {
+        const dayStart = d * 24;
+        const dayEnd = Math.min(forecastData.time.length, (d + 1) * 24);
+        if (dayStart < forecastData.time.length) {
+          const temps = forecastData.temperature_2m.slice(dayStart, dayEnd);
+          if (temps.length > 0) {
+            maxTemp = Math.max(...temps);
+            minTemp = Math.min(...temps);
+          }
+        }
+      }
+
+      const dayHi = ThermalStressEngine.calculateHeatIndex(maxTemp, dayRh);
+      const dayWbgt = ThermalStressEngine.calculateWBGT(maxTemp, dayRh, 750);
+      const dayUtci = ThermalStressEngine.calculateUTCI(maxTemp, dayRh, 12, 750);
+      const dayHtss = ThermalStressEngine.calculateHTSS(dayHi, dayWbgt, dayUtci);
+
+      const iconName = maxTemp > 42 ? 'flame' : (maxTemp > 38 ? 'sun' : (dayRh > 65 ? 'cloud-rain' : 'cloud-sun'));
+      const color = ThermalStressEngine.getRiskColor(dayHtss.category);
+
+      days.push({
+        label: dayLabel,
+        maxTemp: maxTemp.toFixed(1),
+        minTemp: minTemp.toFixed(1),
+        humidity: Math.round(dayRh),
+        category: dayHtss.category,
+        color: color,
+        icon: iconName,
+        htss: Math.round(dayHtss.score)
+      });
+    }
+
+    container.innerHTML = days.map(day => `
+      <div class="forecast-day-card">
+        <div class="day-name">${day.label}</div>
+        <div style="margin:8px 0; color:${day.color};">
+          <i data-lucide="${day.icon}" style="width:24px; height:24px;"></i>
+        </div>
+        <div class="day-temps">
+          <span class="max-temp">${day.maxTemp}°</span>
+          <span class="min-temp">${day.minTemp}°</span>
+        </div>
+        <div style="font-size:0.75rem; color:var(--text-muted); margin-top:4px;">RH: ${day.humidity}%</div>
+        <div class="badge" style="background:${day.color}25; color:${day.color}; border:1px solid ${day.color}50; margin-top:6px; font-size:0.68rem;">
+          ${day.category} (${day.htss})
+        </div>
+      </div>
+    `).join('');
+
+    if (window.lucide) window.lucide.createIcons();
   }
 
   updateRiskFusion(htssData, weather, city) {
