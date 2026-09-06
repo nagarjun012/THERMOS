@@ -1381,7 +1381,7 @@ class App {
 
         if (btn) {
           btn.classList.add('active-gps');
-          btn.innerHTML = `<span data-icon="navigation"></span> GPS: ${gpsLocObj.districtName} (${lat.toFixed(2)}°, ${lon.toFixed(2)}°)`;
+          btn.innerHTML = `<i data-lucide="navigation"></i> GPS: ${gpsLocObj.districtName} (${lat.toFixed(2)}°, ${lon.toFixed(2)}°)`;
         }
         if (statusText) statusText.textContent = `📍 Live GPS Active: ${gpsLocObj.districtName}`;
 
@@ -1400,7 +1400,7 @@ class App {
         console.warn("GPS Location error:", error.message);
         if (btn) {
           btn.classList.remove('active-gps');
-          btn.innerHTML = `<span data-icon="navigation"></span> Use Live GPS Location`;
+          btn.innerHTML = `<i data-lucide="navigation"></i> Use Live GPS Location`;
         }
         if (statusText) statusText.textContent = `Manual Location Active`;
         alert(`📍 GPS Permission/Location Note: ${error.message}. System continues using manual location selection.`);
@@ -1538,7 +1538,7 @@ class App {
       try {
         new Notification(`[${riskLevel.toUpperCase()}] Heat Risk Alert`, {
           body: `📍 Location: ${locationName}\n⏰ Period: ${periodStr}\n⌛ Duration: ${durationStr}\n⚠️ ${reasonStr}\n🛡️ ${preventionStr}`,
-          icon: '🌡️'
+          icon: "data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20100%20100'%3E%3Ctext%20y='.9em'%20font-size='90'%3E%F0%9F%8C%A1%EF%B8%8F%3C/text%3E%3C/svg%3E"
         });
       } catch (e) {
         console.warn("Notification trigger error:", e);
@@ -1576,9 +1576,9 @@ class App {
       `;
     }
     
-    const circle = document.getElementById('htss-gauge-circle');
+    const circle = document.getElementById('htss-gauge-circle') || document.getElementById('htss-gauge-fill');
     const scoreEl = document.getElementById('htss-value');
-    const labelEl = document.getElementById('htss-label');
+    const labelEl = document.getElementById('htss-label') || document.getElementById('dash-risk-badge');
     const container = gaugeSvg.parentElement;
     
     if (!circle || !scoreEl) return;
@@ -2426,6 +2426,6 @@ class App {
 
 // 10. INITIALIZATION
 document.addEventListener('DOMContentLoaded', () => {
-  window.app = new App();
-  window.app.init();
+  window.thermosApp = new App();
+  window.thermosApp.init();
 });
