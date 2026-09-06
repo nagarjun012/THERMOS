@@ -1104,10 +1104,17 @@ class App {
     if (!mapContainer || !window.L) return;
 
     this.map = L.map('leaflet-map').setView([22.5, 82.0], 5);
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-      attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
+    L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+      attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="https://carto.com/attributions">CARTO</a>',
+      subdomains: 'abcd',
       maxZoom: 19
     }).addTo(this.map);
+
+    if (window.Chart) {
+      Chart.defaults.font.family = "'Plus Jakarta Sans', 'Inter', sans-serif";
+      Chart.defaults.color = '#94a3b8';
+      Chart.defaults.borderColor = 'rgba(255, 255, 255, 0.06)';
+    }
   }
 
   startClock() {
@@ -1248,6 +1255,9 @@ class App {
     // Evaluate Automatic Location Heat Risk Notification
     this.evaluateAndTriggerNotification(weather, htssData, forecastData, city);
 
+    // Update Ambient Weather Background Animation
+    this.updateWeatherAnimation(weather, htssData.category);
+
     if (scenarioBadge) {
       scenarioBadge.textContent = `🔴 LIVE — ${city.name}`;
       scenarioBadge.className = 'scenario-badge live-badge';
@@ -1255,6 +1265,24 @@ class App {
     
     this.isUpdating = false;
     if (window.lucide) window.lucide.createIcons();
+  }
+
+  updateWeatherAnimation(weather, riskCategory) {
+    const animLayer = document.getElementById('weather-animation-layer');
+    if (!animLayer) return;
+
+    let animClass = 'weather-anim-clear';
+    if ((weather.weatherCode >= 50 && weather.weatherCode <= 67) || (weather.weatherCode >= 80 && weather.weatherCode <= 82)) {
+      animClass = 'weather-anim-rain';
+    } else if (riskCategory === 'Extreme' || weather.weatherCode >= 95 || weather.temperature > 43) {
+      animClass = 'weather-anim-storm';
+    } else if (weather.windSpeed > 22) {
+      animClass = 'weather-anim-wind';
+    } else if (weather.humidity > 68) {
+      animClass = 'weather-anim-clouds';
+    }
+
+    animLayer.className = animClass;
   }
 
   updateRiskFusion(htssData, weather, city) {
