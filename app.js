@@ -1581,7 +1581,7 @@ class App {
     const labelEl = document.getElementById('htss-label');
     const container = gaugeSvg.parentElement;
     
-    if (!circle || !scoreEl || !labelEl) return;
+    if (!circle || !scoreEl) return;
     
     if (this.gaugeAnimation) cancelAnimationFrame(this.gaugeAnimation);
     
@@ -1589,38 +1589,60 @@ class App {
     const circumference = 2 * Math.PI * radius;
     circle.setAttribute('stroke-dasharray', `${circumference} ${circumference}`);
     
-    const targetOffset = circumference - (score / 100) * circumference;
+    const targetOffset = circumference - (Math.min(100, Math.max(0, score)) / 100) * circumference;
     const color = ThermalStressEngine.getRiskColor(category);
     
-    let currentScore = 0;
-    const animate = () => {
-      currentScore += (score - currentScore) * 0.1;
-      const offset = circumference - (currentScore / 100) * circumference;
-      
-      circle.setAttribute('stroke-dashoffset', offset);
-      circle.setAttribute('stroke', color);
-      scoreEl.textContent = Math.round(currentScore);
-      scoreEl.style.color = color;
-      
-      if (Math.abs(score - currentScore) > 0.5) {
-        this.gaugeAnimation = requestAnimationFrame(animate);
-      } else {
-        circle.setAttribute('stroke-dashoffset', targetOffset);
-        scoreEl.textContent = Math.round(score);
-        scoreEl.style.color = color;
-        labelEl.textContent = category.toUpperCase();
-        labelEl.style.color = color;
-        
-        if (container) {
-          container.className = 'gauge-container';
-          if (score > 80) container.classList.add('glow-extreme');
-          else if (score > 65) container.classList.add('glow-high');
-          else if (score > 50) container.classList.add('glow-moderate');
-        }
-      }
-    };
+    circle.style.transition = 'stroke-dashoffset 0.8s cubic-bezier(0.16, 1, 0.3, 1), stroke 0.4s ease';
+    circle.setAttribute('stroke-dashoffset', targetOffset);
+    circle.setAttribute('stroke', color);
     
-    animate();
+    scoreEl.textContent = Math.round(score);
+    scoreEl.style.color = color;
+    
+    if (labelEl) {
+      labelEl.textContent = category.toUpperCase();
+      labelEl.style.color = color;
+    }
+    
+    if (container) {
+      container.className = 'htss-circle-wrapper';
+      if (score > 80) container.classList.add('glow-extreme');
+      else if (score > 65) container.classList.add('glow-high');
+      else if (score > 50) container.classList.add('glow-moderate');
+    }
+  }
+
+  updateProbability(prob) {
+    const svgEl = document.getElementById('prob-gauge');
+    if (!svgEl) return;
+    if (!svgEl.querySelector('circle.prob-bg')) {
+      svgEl.innerHTML = `
+        <circle class="prob-bg" cx="60" cy="60" r="50" fill="none" stroke="#1a1f2e" stroke-width="10" />
+        <circle id="prob-circle" cx="60" cy="60" r="50" fill="none" stroke="#10b981" stroke-width="10"
+          stroke-linecap="round" transform="rotate(-90 60 60)"
+          style="transition: stroke-dashoffset 0.5s ease;" />
+      `;
+    }
+    const circle = document.getElementById('prob-circle');
+    const text = document.getElementById('prob-value');
+    const stat = document.getElementById('heatwave-status');
+    
+    if (!circle || !text) return;
+    
+    const circumference = 2 * Math.PI * 36;
+    circle.style.strokeDasharray = `${circumference} ${circumference}`;
+    circle.style.strokeDashoffset = circumference - (prob / 100) * circumference;
+    
+    const color = ThermalStressEngine.getRiskColor(ThermalStressEngine.getRiskLevel(prob));
+    circle.style.stroke = color;
+    
+    text.textContent = `${Math.round(prob)}%`;
+    text.style.fill = color;
+    
+    if (stat) {
+      stat.textContent = prob > 70 ? 'High Risk' : prob > 40 ? 'Moderate Risk' : 'Low Risk';
+      stat.style.color = color;
+    }
   }
 
   updateIndexDisplay(prefix, value, category, maxVal) {
@@ -2404,6 +2426,6 @@ class App {
 
 // 10. INITIALIZATION
 document.addEventListener('DOMContentLoaded', () => {
-  const app = new App();
-  app.init();
+  window.app = new App();
+  window.app.init();
 });
