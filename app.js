@@ -370,13 +370,21 @@ class ThermalStressEngine {
     else if (score > 50) category = 'Moderate';
     else if (score > 30) category = 'Low';
 
+    // Safe division for contributions — avoid NaN/Infinity when weighted is 0
+    let contribUtci = 0, contribWbgt = 0, contribHi = 0;
+    if (weighted > 0) {
+      contribUtci = Math.round((n_utci * 0.45 / weighted) * 100);
+      contribWbgt = Math.round((n_wbgt * 0.35 / weighted) * 100);
+      contribHi = Math.round((n_hi * 0.20 / weighted) * 100);
+    }
+
     return {
       score,
       category,
       contributions: {
-        utci: Math.round((n_utci * 0.45 / weighted) * 100) || 0,
-        wbgt: Math.round((n_wbgt * 0.35 / weighted) * 100) || 0,
-        hi: Math.round((n_hi * 0.20 / weighted) * 100) || 0
+        utci: contribUtci,
+        wbgt: contribWbgt,
+        hi: contribHi
       }
     };
   }
@@ -429,7 +437,7 @@ class ThermalStressEngine {
 
     const fusedLevel = this.getRiskLevel(fusedScore);
 
-    // 4. ML 3-5 Day Hospitalization & Mortality Risk Forecast (D+1 to D+5)
+    // 4. Rule-Based 3-5 Day Hospitalization & Mortality Risk Forecast (D+1 to D+5)
     const forecastDays = [];
     const dayLabels = ['D+1', 'D+2', 'D+3', 'D+4', 'D+5'];
     
@@ -460,7 +468,7 @@ class ThermalStressEngine {
       cumulativeLoad,
       forecastDays,
       topFactors,
-      confidenceScore: (92.4 + (fusedScore * 0.06)).toFixed(1)
+      dataSource: 'Rule-Based Biometeorological Engine'
     };
   }
 
@@ -1305,6 +1313,17 @@ class App {
         `;
       }).join('');
     }
+
+    // Top Risk Factors
+    const topFactorsEl = document.getElementById('top-risk-drivers');
+    if (topFactorsEl) {
+      topFactorsEl.innerHTML = fusion.topFactors.map(f => `
+        <div class="risk-factor-item">
+          <span>${f.name}</span>
+          <strong style="color:#f8fafc">${f.val}</strong>
+        </div>
+      `).join('');
+    }
   }
 
   requestGPSLocation() {
@@ -1507,70 +1526,8 @@ class App {
     }
   }
 
-  updateRiskFusion(htssData, weather, city) {
-    const vulnData = VULNERABILITY_DATA[city.state] || VULNERABILITY_DATA['Delhi'];
-    const fusion = ThermalStressEngine.calculateRiskFusion(htssData, weather, city, vulnData);
-
-    // Score & Level
-    this.setElText('fusion-score-val', fusion.fusedScore);
-    const levelEl = document.getElementById('fusion-score-level');
-    if (levelEl) {
-      levelEl.textContent = fusion.fusedLevel.toUpperCase() + ' RISK';
-      const color = ThermalStressEngine.getRiskColor(fusion.fusedLevel);
-      levelEl.style.backgroundColor = `${color}25`;
-      levelEl.style.color = color;
-      levelEl.style.border = `1px solid ${color}60`;
-    }
-
-    // Confidence badge
-    this.setElText('ml-confidence-badge', `⚡ ML Model Confidence: ${fusion.confidenceScore}%`);
-
-    // Cumulative heat load
-    const loadEl = document.getElementById('cumulative-heat-load');
-    if (loadEl) {
-      loadEl.textContent = fusion.cumulativeLoad;
-      if (fusion.fusedScore > 75) {
-        loadEl.style.background = 'rgba(239, 68, 68, 0.2)';
-        loadEl.style.color = '#fca5a5';
-        loadEl.style.border = '1px solid rgba(239, 68, 68, 0.4)';
-      } else if (fusion.fusedScore > 60) {
-        loadEl.style.background = 'rgba(245, 158, 11, 0.15)';
-        loadEl.style.color = '#fbbf24';
-        loadEl.style.border = '1px solid rgba(245, 158, 11, 0.3)';
-      } else {
-        loadEl.style.background = 'rgba(16, 185, 129, 0.15)';
-        loadEl.style.color = '#34d399';
-        loadEl.style.border = '1px solid rgba(16, 185, 129, 0.3)';
-      }
-    }
-
-    // 3-5 Day Hospitalization Cards
-    const forecastDaysEl = document.getElementById('ml-forecast-days');
-    if (forecastDaysEl) {
-      forecastDaysEl.innerHTML = fusion.forecastDays.map(d => {
-        const color = ThermalStressEngine.getRiskColor(d.riskLevel);
-        return `
-          <div class="day-prediction-card">
-            <div class="day-name">${d.dayLabel}</div>
-            <div class="day-hosp-rate" style="color:${color}">${d.hospitalizationRate}</div>
-            <div class="day-hosp-label">Hosp / 100k</div>
-            <div class="day-risk-tag" style="background:${color}25; color:${color}">${d.riskLevel}</div>
-          </div>
-        `;
-      }).join('');
-    }
-
-    // Top Risk Factors
-    const topFactorsEl = document.getElementById('top-risk-drivers');
-    if (topFactorsEl) {
-      topFactorsEl.innerHTML = fusion.topFactors.map(f => `
-        <div class="risk-factor-item">
-          <span>${f.name}</span>
-          <strong style="color:#f8fafc">${f.val}</strong>
-        </div>
-      `).join('');
-    }
-  }
+  // [REMOVED] Duplicate updateRiskFusion that was overwriting the corrected version (lines 1252-1308)
+  // and re-injecting fake "ML Model Confidence" text. The single correct definition is above.
 
   setElText(id, text) {
     const el = document.getElementById(id);
