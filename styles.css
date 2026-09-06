@@ -2043,3 +2043,337 @@ canvas {
     padding: 5px 8px;
   }
 }
+
+/* ==========================================================================
+   SIH 2026 REFINED STYLES & ACTION-FIRST COMPONENT DESIGN SYSTEM
+   ========================================================================== */
+
+/* SIH Presentation Banner */
+.sih-story-banner {
+  background: linear-gradient(135deg, rgba(30, 41, 59, 0.8), rgba(15, 23, 42, 0.9));
+  border: 1px solid rgba(59, 130, 246, 0.3);
+  border-left: 4px solid #3b82f6;
+  margin-bottom: 20px;
+  padding: 20px;
+}
+.story-header {
+  margin-bottom: 14px;
+}
+.story-tag {
+  font-size: 0.68rem;
+  font-weight: 800;
+  letter-spacing: 1px;
+  color: #60a5fa;
+  background: rgba(59, 130, 246, 0.18);
+  padding: 4px 8px;
+  border-radius: 6px;
+  display: inline-block;
+  margin-bottom: 6px;
+}
+.story-header h2 {
+  font-size: 1.15rem;
+  font-weight: 800;
+  color: #f8fafc;
+  margin: 0;
+}
+.story-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 14px;
+}
+.story-step {
+  background: rgba(15, 23, 42, 0.6);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  padding: 12px 14px;
+  border-radius: 12px;
+}
+.story-step-num {
+  font-size: 0.7rem;
+  font-weight: 800;
+  color: #38bdf8;
+  margin-bottom: 4px;
+}
+.story-step p {
+  font-size: 0.84rem;
+  color: #cbd5e1;
+  margin: 0;
+  line-height: 1.4;
+}
+
+/* Action-First Hero Card */
+.action-hero-card {
+  background: linear-gradient(135deg, rgba(15, 23, 42, 0.9), rgba(30, 41, 59, 0.8));
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.5);
+  padding: 24px;
+  border-radius: 20px;
+}
+.action-hero-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 20px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  margin-bottom: 20px;
+}
+.hero-location-block {
+  flex: 1;
+  min-width: 260px;
+}
+.hero-label {
+  font-size: 0.7rem;
+  font-weight: 800;
+  letter-spacing: 1px;
+  color: #94a3b8;
+  display: block;
+  margin-bottom: 4px;
+}
+.hero-location-title {
+  font-size: 1.8rem;
+  font-weight: 900;
+  color: #ffffff;
+  margin: 0 0 8px 0;
+  line-height: 1.2;
+}
+.hero-data-meta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.data-meta-tag {
+  font-size: 0.72rem;
+  color: #cbd5e1;
+  background: rgba(255, 255, 255, 0.08);
+  padding: 3px 8px;
+  border-radius: 6px;
+}
+.data-quality-badge {
+  font-size: 0.72rem;
+  font-weight: 700;
+  padding: 3px 8px;
+  border-radius: 6px;
+}
+.quality-high {
+  background: rgba(16, 185, 129, 0.2);
+  color: #34d399;
+  border: 1px solid rgba(16, 185, 129, 0.4);
+}
+
+.hero-metrics-block {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  flex-wrap: wrap;
+}
+.hero-temp-box {
+  text-align: right;
+}
+.hero-temp-num {
+  font-size: 2.6rem;
+  font-weight: 900;
+  color: #ffffff;
+  line-height: 1;
+}
+.hero-htss-box {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  background: rgba(15, 23, 42, 0.6);
+  padding: 10px 16px;
+  border-radius: 16px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+.htss-circle-wrapper {
+  width: 70px;
+  height: 70px;
+  position: relative;
+}
+.gauge-denom {
+  font-size: 0.65rem;
+  color: #94a3b8;
+  display: block;
+}
+
+.risk-pill {
+  font-size: 0.82rem;
+  font-weight: 800;
+  padding: 6px 12px;
+  border-radius: 8px;
+  display: inline-block;
+  margin-top: 4px;
+  text-transform: uppercase;
+}
+.pill-safe { background: rgba(16, 185, 129, 0.25); color: #34d399; border: 1px solid #10b981; }
+.pill-low { background: rgba(234, 179, 8, 0.25); color: #fde047; border: 1px solid #eab308; }
+.pill-moderate { background: rgba(249, 115, 22, 0.25); color: #fdba74; border: 1px solid #f97316; }
+.pill-high { background: rgba(239, 68, 68, 0.25); color: #fca5a5; border: 1px solid #ef4444; }
+.pill-extreme { background: rgba(168, 85, 247, 0.25); color: #e9d5ff; border: 1px solid #a855f7; }
+
+/* Hero Bottom: Why & What To Do */
+.action-hero-bottom {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 16px;
+}
+.hero-why-box, .hero-action-box {
+  background: rgba(15, 23, 42, 0.65);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 14px;
+  padding: 16px;
+}
+.hero-why-box { border-left: 4px solid #f97316; }
+.hero-action-box { border-left: 4px solid #10b981; }
+
+.hero-box-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+.hero-box-header h3 {
+  font-size: 0.95rem;
+  font-weight: 800;
+  color: #f8fafc;
+  margin: 0;
+}
+.hero-box-content {
+  font-size: 0.88rem;
+  color: #e2e8f0;
+  line-height: 1.5;
+  margin: 0;
+}
+
+.hero-disclaimer-footnote {
+  margin-top: 16px;
+  padding-top: 12px;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  font-size: 0.75rem;
+  color: #94a3b8;
+  line-height: 1.4;
+}
+
+/* Expandable Technical Metrics */
+.metric-card-box {
+  background: rgba(15, 23, 42, 0.6);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 14px;
+  border-radius: 14px;
+}
+.metric-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+.metric-title {
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: #cbd5e1;
+}
+.metric-large-val {
+  font-size: 1.6rem;
+  font-weight: 900;
+  color: #ffffff;
+  margin-bottom: 6px;
+}
+.metric-plain-desc {
+  font-size: 0.78rem;
+  color: #94a3b8;
+  margin: 0 0 10px 0;
+  line-height: 1.35;
+  font-style: italic;
+}
+.btn-expand {
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  color: #93c5fd;
+  padding: 4px 12px;
+  border-radius: 8px;
+  font-size: 0.78rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+.btn-expand:hover {
+  background: rgba(255, 255, 255, 0.16);
+  color: #ffffff;
+}
+
+/* Flowchart for Risk Engine Transparency */
+.flowchart-container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  overflow-x: auto;
+  padding: 12px 6px;
+}
+.flow-step {
+  background: rgba(15, 23, 42, 0.7);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 12px;
+  padding: 10px 14px;
+  text-align: center;
+  min-width: 130px;
+  flex: 1;
+}
+.flow-step.active-step {
+  border-color: #3b82f6;
+  background: rgba(59, 130, 246, 0.15);
+}
+.flow-icon {
+  font-size: 1.2rem;
+  display: block;
+  margin-bottom: 4px;
+}
+.flow-title {
+  font-size: 0.78rem;
+  font-weight: 800;
+  color: #f8fafc;
+  display: block;
+}
+.flow-sub {
+  font-size: 0.68rem;
+  color: #94a3b8;
+  display: block;
+  margin-top: 2px;
+}
+.flow-arrow {
+  color: #64748b;
+  font-size: 1.1rem;
+  font-weight: bold;
+}
+
+/* High-Contrast Alert Badge Rule */
+.badge.bg-warning {
+  color: #050811 !important;
+  font-weight: 800 !important;
+}
+
+/* Responsive adjustments for Action-First Hero */
+@media (max-width: 768px) {
+  .action-hero-top {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  .hero-temp-box {
+    text-align: left;
+  }
+  .hero-metrics-block {
+    justify-content: space-between;
+    width: 100%;
+  }
+  .flowchart-container {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .flow-arrow {
+    transform: rotate(90deg);
+    text-align: center;
+    margin: 4px 0;
+  }
+}
+
