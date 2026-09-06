@@ -1,0 +1,847 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Thermo Guard — AI-Powered Heatwave Early Warning & Human Thermal Stress Platform</title>
+  <meta name="description" content="Thermo Guard: AI-Powered Extreme Heatwave Early Warning & Human Thermal Stress Index Platform for India | SIH 26083">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🌡️</text></svg>">
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+  
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="" />
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin="" defer></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js" defer></script>
+  <script src="https://unpkg.com/lucide@latest" defer></script>
+  
+  <link rel="stylesheet" href="styles.css">
+  <script src="app.js" defer></script>
+</head>
+<body>
+  <!-- AUTOMATIC LOCATION HEAT RISK ALERT BANNER -->
+  <div id="gps-alert-banner" class="gps-alert-banner hidden">
+    <div class="alert-banner-glass">
+      <div class="alert-banner-header">
+        <span id="banner-risk-badge" class="badge bg-danger">🔴 EXTREME HEAT RISK</span>
+        <h3 class="alert-banner-title">Automatic Location Heat Risk Alert</h3>
+        <button id="close-alert-banner-btn" class="banner-close-btn" aria-label="Close Alert">&times;</button>
+      </div>
+      <div class="alert-banner-body">
+        <div class="banner-info-grid">
+          <div class="banner-info-item">📍 <strong>Location:</strong> <span id="banner-loc">Detecting...</span></div>
+          <div class="banner-info-item">⏰ <strong>Risk Period:</strong> <span id="banner-period">--</span></div>
+          <div class="banner-info-item">⌛ <strong>Duration:</strong> <span id="banner-duration">--</span></div>
+          <div class="banner-info-item">🌡️ <strong>Conditions:</strong> <span id="banner-cond">--</span></div>
+        </div>
+        <div class="banner-reason-box">⚠️ <strong>Risk Reason:</strong> <span id="banner-reason">--</span></div>
+        <div class="banner-prevention-box">🛡️ <strong>Prevention / Safety Actions:</strong> <span id="banner-prevention">--</span></div>
+      </div>
+    </div>
+  </div>
+
+  <div id="app">
+    <!-- HEADER -->
+    <header id="main-header">
+      <div class="header-brand">
+        <div class="brand-icon">
+          <span class="brand-icon-inner">🛡️</span>
+        </div>
+        <div class="brand-text">
+          <h1>Thermo<span class="brand-accent">Guard</span></h1>
+          <span class="brand-subtitle">AI-Powered Heatwave Early Warning & Human Thermal Stress Platform</span>
+        </div>
+      </div>
+      <div class="header-status">
+        <span id="live-clock"></span>
+        <span id="scenario-badge" class="scenario-badge live-badge">🔴 LIVE API</span>
+        <button id="mobile-menu-toggle" class="mobile-menu-toggle" aria-label="Toggle Navigation Menu">
+          <i data-lucide="grid"></i>
+        </button>
+      </div>
+    </header>
+
+    <!-- DESKTOP NAVIGATION BAR -->
+    <nav id="main-nav">
+      <button class="nav-btn active" data-page="dashboard"><i data-lucide="layout-dashboard" class="nav-icon"></i> Dashboard</button>
+      <button class="nav-btn" data-page="map"><i data-lucide="map-pin" class="nav-icon"></i> Heat Map</button>
+      <button class="nav-btn" data-page="calculator"><i data-lucide="calculator" class="nav-icon"></i> 40°C & Personal Risk</button>
+      <button class="nav-btn" data-page="night-uhi"><i data-lucide="moon" class="nav-icon"></i> Night Heat & UHI</button>
+      <button class="nav-btn" data-page="government"><i data-lucide="shield-alert" class="nav-icon"></i> Government</button>
+      <button class="nav-btn" data-page="alerts-center"><i data-lucide="bell-ring" class="nav-icon"></i> Alerts & Dispatch</button>
+      <button class="nav-btn" data-page="analytics"><i data-lucide="bar-chart-3" class="nav-icon"></i> Analytics</button>
+      <button class="nav-btn" data-page="about"><i data-lucide="info" class="nav-icon"></i> About</button>
+    </nav>
+
+    <!-- MOBILE BOTTOM NAVIGATION BAR -->
+    <nav id="mobile-bottom-nav" class="mobile-bottom-nav">
+      <button class="bottom-nav-btn active" data-page="dashboard">
+        <i data-lucide="layout-dashboard" class="bottom-nav-icon"></i>
+        <span class="bottom-nav-label">Dashboard</span>
+      </button>
+      <button class="bottom-nav-btn" data-page="map">
+        <i data-lucide="map-pin" class="bottom-nav-icon"></i>
+        <span class="bottom-nav-label">Heat Map</span>
+      </button>
+      <button class="bottom-nav-btn" data-page="calculator">
+        <i data-lucide="calculator" class="bottom-nav-icon"></i>
+        <span class="bottom-nav-label">Risk Calc</span>
+      </button>
+      <button class="bottom-nav-btn" data-page="government">
+        <i data-lucide="shield-alert" class="bottom-nav-icon"></i>
+        <span class="bottom-nav-label">Govt</span>
+      </button>
+      <button class="bottom-nav-btn" id="mobile-bottom-menu-btn">
+        <i data-lucide="grid" class="bottom-nav-icon"></i>
+        <span class="bottom-nav-label">Menu</span>
+      </button>
+    </nav>
+
+    <!-- MOBILE MENU MODAL BACKDROP -->
+    <div id="menu-backdrop" class="menu-backdrop"></div>
+
+    <!-- MODERN MOBILE MENU SHEET PANEL -->
+    <div id="mobile-menu-modal" class="mobile-menu-panel">
+      <div class="menu-panel-drag-handle"></div>
+      
+      <div class="menu-panel-header">
+        <div class="menu-panel-title">
+          <span class="menu-title-icon">📱</span>
+          <div>
+            <h3>ThermoGuard Hub</h3>
+            <p>Thermal Intelligence & Operational Tools</p>
+          </div>
+        </div>
+        <button id="close-menu-panel-btn" class="menu-close-btn" aria-label="Close Menu">
+          <i data-lucide="x"></i>
+        </button>
+      </div>
+
+      <div class="menu-panel-content">
+        <!-- SECTION 1: ADVANCED INTELLIGENCE & ALERTS -->
+        <div class="menu-section-title">🛰️ Intelligence & Emergency Alerts</div>
+        <div class="menu-grid-2col">
+          <button class="menu-card-btn" data-page="night-uhi">
+            <div class="menu-card-icon" style="background: rgba(168, 85, 247, 0.2); color: #c084fc;">
+              <i data-lucide="moon"></i>
+            </div>
+            <div class="menu-card-text">
+              <div class="menu-card-title">Night Heat & UHI</div>
+              <div class="menu-card-sub">Urban Hotspots & Nocturnal Recovery</div>
+            </div>
+          </button>
+
+          <button class="menu-card-btn" data-page="alerts-center">
+            <div class="menu-card-icon" style="background: rgba(239, 68, 68, 0.2); color: #f87171;">
+              <i data-lucide="bell-ring"></i>
+            </div>
+            <div class="menu-card-text">
+              <div class="menu-card-title">Alerts & Dispatch</div>
+              <div class="menu-card-sub">Emergency Multi-Channel Warnings</div>
+            </div>
+          </button>
+        </div>
+
+        <!-- SECTION 2: ANALYTICS & SCIENCE -->
+        <div class="menu-section-title">📊 Trends & Science</div>
+        <div class="menu-grid-2col">
+          <button class="menu-card-btn" data-page="analytics">
+            <div class="menu-card-icon" style="background: rgba(59, 130, 246, 0.2); color: #60a5fa;">
+              <i data-lucide="bar-chart-3"></i>
+            </div>
+            <div class="menu-card-text">
+              <div class="menu-card-title">5-Year Analytics</div>
+              <div class="menu-card-sub">Historical Trends & Heatwave Days</div>
+            </div>
+          </button>
+
+          <button class="menu-card-btn" data-page="about">
+            <div class="menu-card-icon" style="background: rgba(16, 185, 129, 0.2); color: #34d399;">
+              <i data-lucide="info"></i>
+            </div>
+            <div class="menu-card-text">
+              <div class="menu-card-title">About & Methodology</div>
+              <div class="menu-card-sub">UTCI, WBGT & SIH26083 Science</div>
+            </div>
+          </button>
+        </div>
+
+        <!-- SECTION 3: CORE NAVIGATION QUICK LINKS -->
+        <div class="menu-section-title">🧭 All Application Modules</div>
+        <div class="menu-list-stack">
+          <button class="menu-list-item" data-page="dashboard">
+            <i data-lucide="layout-dashboard" class="menu-list-icon"></i>
+            <span>Main Dashboard</span>
+            <i data-lucide="chevron-right" class="menu-arrow-icon"></i>
+          </button>
+          <button class="menu-list-item" data-page="map">
+            <i data-lucide="map-pin" class="menu-list-icon"></i>
+            <span>Hyper-Local Ward GIS Heat Map</span>
+            <i data-lucide="chevron-right" class="menu-arrow-icon"></i>
+          </button>
+          <button class="menu-list-item" data-page="calculator">
+            <i data-lucide="calculator" class="menu-list-icon"></i>
+            <span>40°C Paradox & Personal Risk Calculator</span>
+            <i data-lucide="chevron-right" class="menu-arrow-icon"></i>
+          </button>
+          <button class="menu-list-item" data-page="government">
+            <i data-lucide="shield-alert" class="menu-list-icon"></i>
+            <span>Government Command Center</span>
+            <i data-lucide="chevron-right" class="menu-arrow-icon"></i>
+          </button>
+        </div>
+
+        <!-- SECTION 4: DATA EXPORT ACTION BUTTONS -->
+        <div class="menu-section-title">📥 Data Reports & Downloads</div>
+        <div class="menu-grid-2col" style="margin-bottom: 24px;">
+          <button id="menu-export-csv" class="menu-export-btn">
+            <i data-lucide="file-text"></i>
+            <span>Export CSV Report</span>
+          </button>
+          <button id="menu-export-json" class="menu-export-btn">
+            <i data-lucide="file-code"></i>
+            <span>Export JSON Dataset</span>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- PAGE: DASHBOARD -->
+    <section id="page-dashboard" class="page active">
+      <!-- City Selector & GPS Location Control Bar -->
+      <div class="city-selector-bar">
+        <div class="selector-group">
+          <label for="state-select">State / UT:</label>
+          <select id="state-select"></select>
+          <label for="city-select" class="ms-2">District / City:</label>
+          <select id="city-select"></select>
+        </div>
+        <div class="gps-controls-group" style="display:flex; align-items:center; gap:12px;">
+          <button id="gps-location-btn" class="gps-location-btn">
+            <span data-icon="navigation"></span> Use Live GPS Location
+          </button>
+          <div id="gps-status-pill" class="live-status-pill">
+            <span class="live-pulse-dot"></span>
+            <span id="gps-status-text">Manual Location Active</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Top Row: HTSS Gauge + Weather + Thermal Indices -->
+      <div class="dashboard-grid-top">
+        <!-- HTSS Gauge -->
+        <div class="card card-gauge">
+          <h2 class="card-title">Human Thermal Stress Score</h2>
+          <div class="gauge-container">
+            <svg id="htss-gauge" viewBox="0 0 260 260" class="gauge-svg"></svg>
+            <div class="gauge-center">
+              <span id="htss-value" class="gauge-value">0</span>
+              <span id="htss-label" class="gauge-label">SAFE</span>
+            </div>
+          </div>
+          <div class="gauge-subtitle">UTCI: 45% · WBGT: 35% · HI: 20%</div>
+        </div>
+
+        <!-- Weather Card -->
+        <div class="card card-weather">
+          <h2 class="card-title" style="justify-content:space-between;">
+            <span><span data-icon="cloud-sun"></span> Current Weather</span>
+            <span id="wx-quality" class="badge bg-info" style="font-size:0.65rem;">99.4% Signal Integrity</span>
+          </h2>
+          <div class="weather-grid" style="grid-template-columns: repeat(3, 1fr); gap: 12px;">
+            <div class="weather-item">
+              <span class="weather-icon" data-icon="thermometer"></span>
+              <span class="weather-label">Temperature</span>
+              <span id="wx-temp" class="weather-value">--°C</span>
+            </div>
+            <div class="weather-item">
+              <span class="weather-icon" data-icon="droplets"></span>
+              <span class="weather-label">Humidity</span>
+              <span id="wx-humidity" class="weather-value">--%</span>
+            </div>
+            <div class="weather-item">
+              <span class="weather-icon" data-icon="wind"></span>
+              <span class="weather-label">Wind Speed</span>
+              <span id="wx-wind" class="weather-value">-- km/h</span>
+            </div>
+            <div class="weather-item">
+              <span class="weather-icon" data-icon="sun"></span>
+              <span class="weather-label">Solar Radiation</span>
+              <span id="wx-solar" class="weather-value">-- W/m²</span>
+            </div>
+            <div class="weather-item">
+              <span class="weather-icon" data-icon="droplet"></span>
+              <span class="weather-label">Dew Point</span>
+              <span id="wx-dew" class="weather-value">--°C</span>
+            </div>
+            <div class="weather-item">
+              <span class="weather-icon" data-icon="gauge"></span>
+              <span class="weather-label">Pressure</span>
+              <span id="wx-pressure" class="weather-value">-- hPa</span>
+            </div>
+            <div class="weather-item">
+              <span class="weather-icon" data-icon="zap"></span>
+              <span class="weather-label">UV Index</span>
+              <span id="wx-uv" class="weather-value">--</span>
+            </div>
+            <div class="weather-item">
+              <span class="weather-icon" data-icon="cloud"></span>
+              <span class="weather-label">Cloud Cover</span>
+              <span id="wx-clouds" class="weather-value">--%</span>
+            </div>
+            <div class="weather-item">
+              <span class="weather-icon" data-icon="cloud-rain"></span>
+              <span class="weather-label">Rainfall</span>
+              <span id="wx-rain" class="weather-value">0.0 mm</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Thermal Indices Card -->
+        <div class="card card-indices">
+          <h2 class="card-title"><span data-icon="flame"></span> Thermal Indices</h2>
+          <div class="indices-grid" style="gap: 14px;">
+            <div class="index-item">
+              <div class="index-header">
+                <span class="index-name">Heat Index (Rothfusz)</span>
+                <span id="hi-cat" class="index-badge">--</span>
+              </div>
+              <span id="hi-value" class="index-value">--°C</span>
+              <div class="index-bar"><div id="hi-bar" class="index-bar-fill"></div></div>
+            </div>
+            <div class="index-item">
+              <div class="index-header">
+                <span class="index-name">WBGT (Outdoor ISO 7243)</span>
+                <span id="wbgt-cat" class="index-badge">--</span>
+              </div>
+              <span id="wbgt-value" class="index-value">--°C</span>
+              <div class="index-bar"><div id="wbgt-bar" class="index-bar-fill"></div></div>
+            </div>
+            <div class="index-item">
+              <div class="index-header">
+                <span class="index-name">UTCI (Universal Thermal Climate)</span>
+                <span id="utci-cat" class="index-badge">--</span>
+              </div>
+              <span id="utci-value" class="index-value">--°C</span>
+              <div class="index-bar"><div id="utci-bar" class="index-bar-fill"></div></div>
+            </div>
+            <div class="index-item">
+              <div class="index-header">
+                <span class="index-name">Humidex / Apparent Temp</span>
+                <span id="humidex-cat" class="index-badge">--</span>
+              </div>
+              <div style="display:flex; justify-content:space-between; align-items:center;">
+                <span id="humidex-value" class="index-value" style="font-size:1rem;">Humidex: --°C</span>
+                <span id="apparent-value" class="index-value" style="font-size:1rem; color:#93c5fd;">Apparent: --°C</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Risk Fusion & ML Health-Risk Prediction (D+3 to D+5) -->
+      <div class="card card-fusion-ml" style="margin-top: 16px;">
+        <div class="fusion-header">
+          <h2 class="card-title" style="margin:0;"><span data-icon="cpu"></span> AI Risk Fusion & Health-Impact Model (D+3 to D+5)</h2>
+          <span id="ml-confidence-badge" class="ml-confidence-tag">⚡ ML Model Confidence: 94.8%</span>
+        </div>
+        <div class="fusion-body-grid">
+          <!-- Risk Fusion Score Box -->
+          <div class="fusion-score-box">
+            <div class="fusion-score-label">Fused Health Risk Score</div>
+            <div id="fusion-score-val" class="fusion-score-num">--</div>
+            <div id="fusion-score-level" class="fusion-score-cat">Calculating...</div>
+            <div class="fusion-formula-ref">Risk Fusion = Thermal Stress + Cumulative Heat Load + Vulnerability + Healthcare Deficit</div>
+          </div>
+          <!-- 3-5 Day Hospitalization / Mortality Risk Forecast -->
+          <div class="fusion-forecast-box">
+            <div class="fusion-box-title">Ward Hospitalization & Mortality Risk (3–5 Days Ahead)</div>
+            <div id="ml-forecast-days" class="ml-forecast-days-grid">
+              <!-- Dynamically populated D+1 to D+5 cards -->
+            </div>
+          </div>
+          <!-- Cumulative Heat Load & Top Risk Factors -->
+          <div class="fusion-factors-box">
+            <div class="fusion-box-title">Cumulative Heat Load & Key Risk Drivers</div>
+            <div id="cumulative-heat-load" class="heat-load-status">Accumulated 48h Heat Load: Moderate</div>
+            <div id="top-risk-drivers" class="top-risk-list"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Middle Row: Contribution + Heatwave Probability + Alerts -->
+      <div class="dashboard-grid-mid">
+        <!-- Risk Contribution -->
+        <div class="card">
+          <h2 class="card-title">Risk Factor Contribution</h2>
+          <div id="contribution-bars" class="contribution-container"></div>
+        </div>
+
+        <!-- Heatwave Probability -->
+        <div class="card">
+          <h2 class="card-title"><span data-icon="alert-triangle"></span> Heatwave Probability</h2>
+          <div class="heatwave-prob-container">
+            <div class="prob-circle-container">
+              <svg id="prob-gauge" viewBox="0 0 120 120" class="prob-svg"></svg>
+              <span id="prob-value" class="prob-center">0%</span>
+            </div>
+            <div id="heatwave-status" class="heatwave-status"></div>
+          </div>
+        </div>
+
+        <!-- Active Alerts -->
+        <div class="card card-alerts">
+          <h2 class="card-title"><span data-icon="bell"></span> Active Alerts</h2>
+          <div id="alerts-container" class="alerts-list"></div>
+        </div>
+      </div>
+
+      <!-- Bottom Row: Forecast Chart + Recommendations & Action Plans -->
+      <div class="dashboard-grid-bottom">
+        <div class="card card-forecast">
+          <h2 class="card-title"><span data-icon="trending-up"></span> 72-Hour Forecast (Open-Meteo API)</h2>
+          <canvas id="forecast-chart"></canvas>
+        </div>
+        <div class="card card-recommendations">
+          <h2 class="card-title"><span data-icon="shield-check"></span> Automated Heat-Action Plan (HAP)</h2>
+          <div id="recommendations-container"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- PAGE: MAP -->
+    <section id="page-map" class="page">
+      <div class="map-toolbar">
+        <div class="toolbar-group">
+          <label for="map-view-select">GIS Granularity:</label>
+          <select id="map-view-select">
+            <option value="city">🌐 City Level (National Overview)</option>
+            <option value="ward" selected>🏙️ Ward Level (Hyper-Local GIS Risk)</option>
+          </select>
+        </div>
+        <div class="toolbar-group">
+          <label for="map-filter-select">Layer Filter:</label>
+          <select id="map-filter-select">
+            <option value="all">All Layers (Risk + Healthcare + Shelters)</option>
+            <option value="high-risk">🔥 High-Risk Wards Only (>65 HTSS)</option>
+            <option value="hospitals">🏥 Emergency Wards & Hospitals</option>
+            <option value="shelters">💧 Hydration & Cooling Centers</option>
+          </select>
+        </div>
+        <div class="toolbar-group">
+          <span id="map-status-info" style="font-size:0.8rem; color:#9ca3af;">Showing Hyper-Local Ward Risk Fusion Data</span>
+        </div>
+      </div>
+      <div class="map-container">
+        <div id="leaflet-map" class="leaflet-map"></div>
+        <div class="map-legend collapsed" id="map-legend">
+          <div class="legend-header" id="legend-toggle-btn">
+            <h3>🗺️ Risk Legend</h3>
+            <span class="legend-toggle-icon" id="legend-toggle-icon">▲</span>
+          </div>
+          <div class="legend-content" id="legend-content">
+            <div class="legend-item"><span class="legend-color" style="background:#10b981"></span> Safe (0-30)</div>
+            <div class="legend-item"><span class="legend-color" style="background:#eab308"></span> Low (31-50)</div>
+            <div class="legend-item"><span class="legend-color" style="background:#f97316"></span> Moderate (51-65)</div>
+            <div class="legend-item"><span class="legend-color" style="background:#ef4444"></span> High (66-80)</div>
+            <div class="legend-item"><span class="legend-color" style="background:#a855f7"></span> Extreme (81-100)</div>
+            <hr style="border:0; border-top:1px solid rgba(255,255,255,0.1); margin:6px 0;">
+            <div class="legend-item"><span style="font-size:0.9rem">🏥</span> Ward Hospital / Emergency Bed</div>
+            <div class="legend-item"><span style="font-size:0.9rem">💧</span> Municipal Cooling Shelter</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- PAGE: CALCULATOR (40°C Demo + Citizen & Worker Risk Calculator) -->
+    <section id="page-calculator" class="page">
+      <div class="govt-header">
+        <h1>40°C Risk Demo & Personal Heat Calculator</h1>
+        <p>Scientific Exposure Demonstration & Individual Worker/Citizen Heat Safeguard Engine</p>
+      </div>
+
+      <!-- 40°C Comparative Demonstration -->
+      <div class="card" style="margin-bottom: 24px;">
+        <h2 class="card-title"><span data-icon="thermometer-sun"></span> 40°C Exposure Paradox: Same Temperature ≠ Same Health Risk</h2>
+        <p style="color:#94a3b8; font-size:0.9rem; margin-bottom:16px;">
+          Standard air temperature warnings fail because human heat stress depends on humidity, solar irradiance, and wind speed. Below is a real-time scientific comparison of 40°C under two different environmental conditions:
+        </p>
+
+        <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+          <!-- Scenario A: Dry Heat -->
+          <div style="background:rgba(15, 23, 42, 0.7); border:1px solid rgba(234, 179, 8, 0.4); border-radius:16px; padding:20px;">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+              <span style="font-weight:700; color:#fde047;">Scenario A: Dry Desert Heat</span>
+              <span class="badge bg-warning">HTSS Score: 48 / 100 (MODERATE)</span>
+            </div>
+            <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px; font-size:0.85rem; color:#cbd5e1; margin-bottom:12px;">
+              <div>Air Temp: <strong>40.0°C</strong></div>
+              <div>Humidity: <strong>18%</strong></div>
+              <div>Wind Speed: <strong>14 km/h</strong></div>
+              <div>Solar Radiation: <strong>850 W/m²</strong></div>
+            </div>
+            <div style="background:rgba(30,41,59,0.8); padding:10px; border-radius:8px; font-size:0.8rem;">
+              <div>Heat Index: <strong>41.2°C</strong> (Caution)</div>
+              <div>WBGT Index: <strong>28.4°C</strong> (Moderate)</div>
+              <div>UTCI Index: <strong>38.1°C</strong> (Strong Stress)</div>
+              <div style="margin-top:6px; color:#e2e8f0;">Sweat evaporates efficiently. Body thermoregulation functions with adequate shade & hydration.</div>
+            </div>
+          </div>
+
+          <!-- Scenario B: Coastal Humid Heat -->
+          <div style="background:rgba(15, 23, 42, 0.7); border:1px solid rgba(239, 68, 68, 0.5); border-radius:16px; padding:20px;">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+              <span style="font-weight:700; color:#f87171;">Scenario B: Coastal Humid Heat</span>
+              <span class="badge bg-danger">HTSS Score: 94 / 100 (EXTREME DANGER)</span>
+            </div>
+            <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px; font-size:0.85rem; color:#cbd5e1; margin-bottom:12px;">
+              <div>Air Temp: <strong>40.0°C</strong></div>
+              <div>Humidity: <strong>75%</strong></div>
+              <div>Wind Speed: <strong>4 km/h</strong></div>
+              <div>Solar Radiation: <strong>920 W/m²</strong></div>
+            </div>
+            <div style="background:rgba(30,41,59,0.8); padding:10px; border-radius:8px; font-size:0.8rem;">
+              <div>Heat Index: <strong>64.1°C</strong> (Extreme Danger)</div>
+              <div>WBGT Index: <strong>36.4°C</strong> (Extreme)</div>
+              <div>UTCI Index: <strong>51.5°C</strong> (Extreme Stress)</div>
+              <div style="margin-top:6px; color:#fca5a5;">Sweat evaporation is impossible. High risk of heat stroke, organ failure, and rapid death without active cooling.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Personal Risk Calculator & Worker Module -->
+      <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 24px;">
+        <div class="card">
+          <h2 class="card-title"><span data-icon="user-check"></span> Personal & Worker Risk Calculator</h2>
+          <form id="personal-calc-form" style="display:flex; flex-direction:column; gap:14px;" onsubmit="return false;">
+            <div>
+              <label style="font-size:0.8rem; font-weight:600; color:#94a3b8;">Age Group:</label>
+              <select id="calc-age" style="width:100%; padding:8px 12px; border-radius:8px; background:#0f172a; color:#fff; border:1px solid rgba(255,255,255,0.15);">
+                <option value="adult">Adult (18 - 60 years)</option>
+                <option value="child">Child (< 12 years)</option>
+                <option value="elderly">Senior Citizen (> 65 years)</option>
+              </select>
+            </div>
+            <div>
+              <label style="font-size:0.8rem; font-weight:600; color:#94a3b8;">Occupation / Work Activity:</label>
+              <select id="calc-occupation" style="width:100%; padding:8px 12px; border-radius:8px; background:#0f172a; color:#fff; border:1px solid rgba(255,255,255,0.15);">
+                <option value="construction">Construction / Agriculture Laborer</option>
+                <option value="delivery">Delivery Executive / Traffic Police / Vendor</option>
+                <option value="indoor">Indoor Office / Home Resident</option>
+              </select>
+            </div>
+            <div>
+              <label style="font-size:0.8rem; font-weight:600; color:#94a3b8;">Labor Intensity:</label>
+              <select id="calc-intensity" style="width:100%; padding:8px 12px; border-radius:8px; background:#0f172a; color:#fff; border:1px solid rgba(255,255,255,0.15);">
+                <option value="heavy">Heavy Physical Labor</option>
+                <option value="moderate">Moderate Standing / Walking</option>
+                <option value="light">Light Sedentary Work</option>
+              </select>
+            </div>
+            <div>
+              <label style="font-size:0.8rem; font-weight:600; color:#94a3b8;">Daily Outdoor Exposure (Hours):</label>
+              <input type="number" id="calc-hours" value="5" min="1" max="14" style="width:100%; padding:8px 12px; border-radius:8px; background:#0f172a; color:#fff; border:1px solid rgba(255,255,255,0.15);">
+            </div>
+            <button id="calc-btn" style="padding:10px 16px; background:linear-gradient(135deg, #3b82f6, #6366f1); border:none; border-radius:10px; color:#fff; font-weight:700; cursor:pointer;">Calculate Personal Risk</button>
+          </form>
+        </div>
+
+        <div class="card" id="calc-results-card">
+          <h2 class="card-title"><span data-icon="shield-alert"></span> Tailored Health Safeguard Plan</h2>
+          <div id="calc-results-body" style="display:flex; flex-direction:column; gap:14px;">
+            <div style="text-align:center; padding:16px; background:rgba(15,23,42,0.6); border-radius:12px; border:1px solid rgba(255,255,255,0.1);">
+              <div style="font-size:0.8rem; color:#94a3b8;">Personal Thermal Risk Score</div>
+              <div id="personal-risk-num" style="font-size:2.8rem; font-weight:900; color:#f43f5e;">78 / 100</div>
+              <div id="personal-risk-cat" class="badge bg-danger">High Personal Risk</div>
+            </div>
+            <div style="display:flex; flex-direction:column; gap:8px; font-size:0.85rem;">
+              <div style="display:flex; justify-content:space-between; background:rgba(30,41,59,0.5); padding:8px 12px; border-radius:8px;">
+                <span>Required Hydration Intake:</span>
+                <strong id="calc-hydration" style="color:#60a5fa;">1.0 Liter / Hour (with ORS)</strong>
+              </div>
+              <div style="display:flex; justify-content:space-between; background:rgba(30,41,59,0.5); padding:8px 12px; border-radius:8px;">
+                <span>OSHA Work / Rest Cycle:</span>
+                <strong id="calc-rest-cycle" style="color:#fbbf24;">45 min work / 15 min shade rest</strong>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- PAGE: NIGHT HEAT & UHI -->
+    <section id="page-night-uhi" class="page">
+      <div class="govt-header">
+        <h1>Night-Time Heat & Urban Heat Island (UHI) Intelligence</h1>
+        <p>Nocturnal Recovery Deficit Monitoring & Ward-Level Microclimate Hotspots</p>
+      </div>
+
+      <div class="analytics-grid" style="margin-bottom:24px;">
+        <div class="card">
+          <h2 class="card-title"><span data-icon="moon"></span> Night-Time Thermal Recovery Index</h2>
+          <div style="display:flex; flex-direction:column; gap:12px;">
+            <div style="display:flex; justify-content:space-between; padding:12px; background:rgba(15,23,42,0.6); border-radius:10px;">
+              <span>Night Minimum Temperature:</span>
+              <strong id="night-min-temp" style="color:#f87171;">28.5°C (Tropical Night)</strong>
+            </div>
+            <div style="display:flex; justify-content:space-between; padding:12px; background:rgba(15,23,42,0.6); border-radius:10px;">
+              <span>Night Relative Humidity:</span>
+              <strong id="night-rh" style="color:#60a5fa;">78%</strong>
+            </div>
+            <div style="display:flex; justify-content:space-between; padding:12px; background:rgba(15,23,42,0.6); border-radius:10px;">
+              <span>Nocturnal Body Recovery Status:</span>
+              <strong id="night-recovery-status" style="color:#f59e0b;">High Deficit (Elevated Mortality Risk)</strong>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <h2 class="card-title"><span data-icon="flame"></span> Ward Urban Heat Island (UHI) Hotspots</h2>
+          <div style="display:flex; flex-direction:column; gap:12px;">
+            <div style="display:flex; justify-content:space-between; padding:12px; background:rgba(15,23,42,0.6); border-radius:10px;">
+              <span>Built-Up Surface Density:</span>
+              <strong id="uhi-builtup" style="color:#fbbf24;">82% Concrete / Asphalt</strong>
+            </div>
+            <div style="display:flex; justify-content:space-between; padding:12px; background:rgba(15,23,42,0.6); border-radius:10px;">
+              <span>Green Canopy Cover (NDVI):</span>
+              <strong id="uhi-green" style="color:#34d399;">14% Low Vegetation</strong>
+            </div>
+            <div style="display:flex; justify-content:space-between; padding:12px; background:rgba(15,23,42,0.6); border-radius:10px;">
+              <span>Surface Temp Anomaly (LST):</span>
+              <strong id="uhi-lst" style="color:#f87171;">+3.2°C Hotspot Elevation</strong>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- PAGE: ALERTS & DISPATCH -->
+    <section id="page-alerts-center" class="page">
+      <div class="govt-header">
+        <h1>Emergency Alert Dispatcher & Data Export Center</h1>
+        <p>Multi-Channel Alert Broadcast Simulator & Open SDMA Integration API</p>
+      </div>
+
+      <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-bottom:24px;">
+        <div class="card">
+          <h2 class="card-title"><span data-icon="send"></span> Broadcast Heatwave Alert</h2>
+          <form id="alert-dispatch-form" style="display:flex; flex-direction:column; gap:12px;" onsubmit="return false;">
+            <div>
+              <label style="font-size:0.8rem; color:#94a3b8;">Target Ward / District:</label>
+              <select id="dispatch-target" style="width:100%; padding:8px; background:#0f172a; color:#fff; border-radius:8px; border:1px solid rgba(255,255,255,0.15);"></select>
+            </div>
+            <div>
+              <label style="font-size:0.8rem; color:#94a3b8;">Dispatch Channel:</label>
+              <select id="dispatch-channel" style="width:100%; padding:8px; background:#0f172a; color:#fff; border-radius:8px; border:1px solid rgba(255,255,255,0.15);">
+                <option value="SMS">SMS Cellular Broadcast (Citizens)</option>
+                <option value="WhatsApp">WhatsApp Emergency Bot Channel</option>
+                <option value="NDMA Push">NDMA Push Notification Network</option>
+              </select>
+            </div>
+            <div>
+              <label style="font-size:0.8rem; color:#94a3b8;">Advisory Message:</label>
+              <textarea id="dispatch-msg" rows="3" style="width:100%; padding:8px; background:#0f172a; color:#fff; border-radius:8px; border:1px solid rgba(255,255,255,0.15);">[THERMOS EMERGENCY ADVISORY] Extreme Human Thermal Stress (HTSS > 80) predicted. Stay indoors 11am-4pm. Cooling centers active.</textarea>
+            </div>
+            <button id="send-alert-btn" style="padding:10px; background:linear-gradient(135deg, #ef4444, #dc2626); color:#fff; font-weight:700; border:none; border-radius:10px; cursor:pointer;">Dispatch Emergency Alert</button>
+          </form>
+        </div>
+
+        <div class="card">
+          <h2 class="card-title"><span data-icon="download"></span> Data Export & Open API Integration</h2>
+          <p style="font-size:0.85rem; color:#94a3b8; margin-bottom:16px;">
+            Export live ward risk metrics, hospital bed counts, and cooling shelter locations for NDMA/SDMA integration.
+          </p>
+          <div style="display:flex; gap:12px; margin-bottom:20px;">
+            <button id="export-csv-btn" style="flex:1; padding:10px; background:linear-gradient(135deg, #10b981, #059669); color:#fff; border:none; border-radius:10px; font-weight:700; cursor:pointer;">Download Ward Risk CSV</button>
+            <button id="export-json-btn" style="flex:1; padding:10px; background:linear-gradient(135deg, #3b82f6, #2563eb); color:#fff; border:none; border-radius:10px; font-weight:700; cursor:pointer;">Download Ward Risk JSON</button>
+          </div>
+          <div style="background:rgba(15,23,42,0.7); padding:12px; border-radius:10px; border:1px solid rgba(255,255,255,0.1); font-family:monospace; font-size:0.75rem; color:#93c5fd;">
+            GET /api/v1/thermos/ward-risk?city=Chennai<br>
+            Response: { "fused_risk": 84, "utci": 42.5, "wbgt": 34.1, "hospital_beds": 1420 }
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <h2 class="card-title"><span data-icon="history"></span> Dispatch Log History</h2>
+        <div class="table-wrapper">
+          <table class="govt-table">
+            <thead>
+              <tr>
+                <th>Alert ID</th>
+                <th>Timestamp</th>
+                <th>Target Ward</th>
+                <th>Channel</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody id="dispatch-log-body">
+              <tr>
+                <td>ALT-948210</td>
+                <td>11:20:45 AM</td>
+                <td>Central Hospital Ward</td>
+                <td>NDMA Push</td>
+                <td><span class="badge bg-info">DELIVERED ✓</span></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- PAGE: GOVERNMENT -->
+    <section id="page-government" class="page">
+      <div class="govt-header">
+        <h1>Government Command Center</h1>
+        <p>National Heat Risk Overview & Decision Support</p>
+      </div>
+      <!-- Overview Cards -->
+      <div id="govt-overview" class="govt-overview-grid"></div>
+      <!-- Government Table -->
+      <div class="card">
+        <h2 class="card-title">City-wise Risk Assessment</h2>
+        <div class="table-wrapper">
+          <table id="govt-table" class="govt-table">
+            <thead>
+              <tr>
+                <th>City</th>
+                <th>State</th>
+                <th>Temp (°C)</th>
+                <th>Humidity (%)</th>
+                <th>HTSS Score</th>
+                <th>Risk Level</th>
+                <th>Heatwave Prob.</th>
+              </tr>
+            </thead>
+            <tbody id="govt-table-body"></tbody>
+          </table>
+        </div>
+      </div>
+      <!-- Vulnerability Section -->
+      <div class="govt-bottom-grid">
+        <div class="card">
+          <h2 class="card-title">State-wise Risk Distribution</h2>
+          <canvas id="state-risk-chart"></canvas>
+        </div>
+        <div class="card">
+          <h2 class="card-title">Vulnerability Assessment</h2>
+          <canvas id="vulnerability-chart"></canvas>
+        </div>
+      </div>
+    </section>
+
+    <!-- PAGE: ANALYTICS -->
+    <section id="page-analytics" class="page">
+      <div class="analytics-header">
+        <h1>Historical Analytics & Trends</h1>
+        <p>5-Year Heatwave Trend Analysis for India</p>
+      </div>
+      <div class="analytics-grid">
+        <div class="card">
+          <h2 class="card-title">Temperature Trend (5 Years)</h2>
+          <canvas id="temp-trend-chart"></canvas>
+        </div>
+        <div class="card">
+          <h2 class="card-title">HTSS Score Trend</h2>
+          <canvas id="htss-trend-chart"></canvas>
+        </div>
+        <div class="card">
+          <h2 class="card-title">Heatwave Days by Year</h2>
+          <canvas id="heatwave-days-chart"></canvas>
+        </div>
+        <div class="card">
+          <h2 class="card-title">Key Insights</h2>
+          <div id="analytics-insights" class="insights-container"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- PAGE: ABOUT -->
+    <section id="page-about" class="page">
+      <div class="about-container">
+        <div class="about-hero">
+          <h1>About <span style="background:linear-gradient(135deg,#f97316,#ef4444);-webkit-background-clip:text;-webkit-text-fill-color:transparent;">Thermo Guard</span></h1>
+          <p>AI-Powered Extreme Heatwave Early Warning & Human Thermal Stress Index Platform for India</p>
+        </div>
+
+        <div class="card">
+          <h2 class="card-title"><span data-icon="shield"></span> Mission</h2>
+          <p>Thermo Guard protects lives by providing real-time heatwave early warnings and human thermal stress analysis. Built for Smart India Hackathon 2026 (Problem SIH26083), serving citizens and government disaster management authorities across India.</p>
+        </div>
+
+        <div class="card">
+          <h2 class="card-title"><span data-icon="book-open"></span> Scientific Methodology</h2>
+          <div class="methodology-grid">
+            <div class="method-card">
+              <h3>Heat Index (HI)</h3>
+              <p class="method-ref">Rothfusz Regression (NOAA/NWS, 1990)</p>
+              <p>9-term polynomial regression modeling perceived temperature from air temperature and relative humidity. Includes boundary adjustments for extreme humidity.</p>
+            </div>
+            <div class="method-card">
+              <h3>WBGT</h3>
+              <p class="method-ref">Australian BoM Simplified (ISO 7243)</p>
+              <p>Wet Bulb Globe Temperature using the simplified outdoor approximation. The gold standard for occupational heat stress assessment.</p>
+            </div>
+            <div class="method-card">
+              <h3>UTCI</h3>
+              <p class="method-ref">Bröde et al. (2012) Approximation</p>
+              <p>Universal Thermal Climate Index based on the Fiala multi-node thermoregulation model. Uses regression approximation.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <h2 class="card-title">HTSS Weighting</h2>
+          <div class="weights-display">
+            <div class="weight-item"><span class="weight-val" style="color:#a855f7">45%</span><span>UTCI</span></div>
+            <div class="weight-item"><span class="weight-val" style="color:#f97316">35%</span><span>WBGT</span></div>
+            <div class="weight-item"><span class="weight-val" style="color:#eab308">20%</span><span>Heat Index</span></div>
+          </div>
+          <p class="weight-note">Non-compensatory safety guardrail: extreme danger on any single index cannot be masked by lower values in others.</p>
+        </div>
+
+        <div class="card">
+          <h2 class="card-title"><span data-icon="bookmark"></span> Research Basis & Official Guidelines (Slide 6 References)</h2>
+          <div class="references-list" style="display:flex; flex-direction:column; gap:12px;">
+            <div class="ref-item" style="background:rgba(255,255,255,0.03); padding:12px 16px; border-radius:10px; border-left:3px solid #3b82f6;">
+              <strong style="color:#60a5fa;">[1] India Meteorological Department (IMD)</strong>
+              <p style="margin:4px 0 0 0; font-size:0.85rem; color:#d1d5db;">Heat Wave Guidance, Districtwise Heatwave Warnings, and IMD Heat Index operational protocols.</p>
+            </div>
+            <div class="ref-item" style="background:rgba(255,255,255,0.03); padding:12px 16px; border-radius:10px; border-left:3px solid #10b981;">
+              <strong style="color:#34d399;">[2] World Health Organization (WHO, 2026)</strong>
+              <p style="margin:4px 0 0 0; font-size:0.85rem; color:#d1d5db;">Heat and Health Guidance & Public Health Heat-Health Action Plans (HHAP) frameworks.</p>
+            </div>
+            <div class="ref-item" style="background:rgba(255,255,255,0.03); padding:12px 16px; border-radius:10px; border-left:3px solid #f59e0b;">
+              <strong style="color:#fbbf24;">[3] WHO India & NDMA</strong>
+              <p style="margin:4px 0 0 0; font-size:0.85rem; color:#d1d5db;">Heat Waves and Health: Population vulnerability mapping, cumulative heat exposure & prevention strategies.</p>
+            </div>
+            <div class="ref-item" style="background:rgba(255,255,255,0.03); padding:12px 16px; border-radius:10px; border-left:3px solid #ef4444;">
+              <strong style="color:#f87171;">[4] CDC / NIOSH</strong>
+              <p style="margin:4px 0 0 0; font-size:0.85rem; color:#d1d5db;">Occupational heat stress guidelines, outdoor worker WBGT thresholds & heat-risk mitigation.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="card about-disclaimer">
+          <h2 class="card-title"><span data-icon="alert-triangle"></span> Disclaimer</h2>
+          <p>Thermo Guard is an operational disaster-preparedness and early-warning management platform. Always follow official IMD and NDMA advisories for emergency response execution.</p>
+        </div>
+
+        <div class="card">
+          <h2 class="card-title">Technology Stack</h2>
+          <div class="tech-tags">
+            <span class="tech-tag">JavaScript (ES6+)</span>
+            <span class="tech-tag">Leaflet.js GIS</span>
+            <span class="tech-tag">Chart.js</span>
+            <span class="tech-tag">HTML5 / CSS3 Glassmorphism</span>
+            <span class="tech-tag">Open-Meteo Real-Time Weather API</span>
+            <span class="tech-tag">Risk Fusion Engine</span>
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
+</body>
+</html>
