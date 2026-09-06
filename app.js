@@ -1104,10 +1104,9 @@ class App {
     if (!mapContainer || !window.L) return;
 
     this.map = L.map('leaflet-map').setView([22.5, 82.0], 5);
-    L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
-      attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="https://carto.com/attributions">CARTO</a>',
-      subdomains: 'abcd',
-      maxZoom: 19
+    L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Dark_Gray_Base/MapServer/tile/{z}/{y}/{x}', {
+      attribution: 'Tiles &copy; Esri &mdash; Esri, DeLorme, NAVTEQ',
+      maxZoom: 16
     }).addTo(this.map);
 
     if (window.Chart) {
@@ -1928,6 +1927,9 @@ class App {
   }
 
   async updateMap() {
+    if (!this.map) {
+      this.initMap();
+    }
     if (!this.map) return;
     
     this.markers.forEach(m => this.map.removeLayer(m));

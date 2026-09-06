@@ -479,7 +479,7 @@
       <div class="dashboard-grid-bottom" style="display:grid; grid-template-columns: 2fr 1fr; gap:20px; margin-top:20px;">
         <div class="card card-forecast">
           <h2 class="card-title"><i data-lucide="trending-up"></i> 72-Hour Temperature & HTSS Forecast (Open-Meteo API)</h2>
-          <canvas id="forecast-chart"></canvas>
+          <div class="chart-wrapper"><canvas id="forecast-chart"></canvas></div>
         </div>
         <div class="card card-recommendations">
           <h2 class="card-title"><i data-lucide="shield-check"></i> Operational Action Recommendations</h2>
@@ -816,11 +816,11 @@
       <div class="govt-bottom-grid" style="display:grid; grid-template-columns: 1fr 1fr; gap:20px; margin-top:20px;">
         <div class="card">
           <h2 class="card-title">State-wise Risk Distribution</h2>
-          <canvas id="state-risk-chart"></canvas>
+          <div class="chart-wrapper"><canvas id="state-risk-chart"></canvas></div>
         </div>
         <div class="card">
           <h2 class="card-title">Demographic Vulnerability Assessment</h2>
-          <canvas id="vulnerability-chart"></canvas>
+          <div class="chart-wrapper"><canvas id="vulnerability-chart"></canvas></div>
         </div>
       </div>
     </section>
@@ -834,15 +834,15 @@
       <div class="analytics-grid" style="display:grid; grid-template-columns: repeat(auto-fit, minmax(360px, 1fr)); gap:20px;">
         <div class="card">
           <h2 class="card-title">Summer Mean Maximum Temperature (5 Years)</h2>
-          <canvas id="temp-trend-chart"></canvas>
+          <div class="chart-wrapper"><canvas id="temp-trend-chart"></canvas></div>
         </div>
         <div class="card">
           <h2 class="card-title">HTSS Stress Score Trajectory</h2>
-          <canvas id="htss-trend-chart"></canvas>
+          <div class="chart-wrapper"><canvas id="htss-trend-chart"></canvas></div>
         </div>
         <div class="card">
           <h2 class="card-title">Annual Heatwave Days by Region</h2>
-          <canvas id="heatwave-days-chart"></canvas>
+          <div class="chart-wrapper"><canvas id="heatwave-days-chart"></canvas></div>
         </div>
         <div class="card">
           <h2 class="card-title">Empirical Trend Insights</h2>
