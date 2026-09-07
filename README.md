@@ -89,13 +89,6 @@ npm install
 npm run dev
 ```
 
-The application will be available at:
-- **Frontend:** http://localhost:5173
-- **Backend API:** http://localhost:8000
-- **API Docs:** http://localhost:8000/docs
-
----
-
 ### 🧪 Demo Mode
 
 THERMOSAFE includes 5 predefined scenarios for demonstration:
