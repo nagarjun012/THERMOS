@@ -1104,9 +1104,9 @@ class App {
     if (!mapContainer || !window.L) return;
 
     this.map = L.map('leaflet-map').setView([22.5, 82.0], 5);
-    L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Dark_Gray_Base/MapServer/tile/{z}/{y}/{x}', {
-      attribution: 'Tiles &copy; Esri &mdash; Esri, DeLorme, NAVTEQ',
-      maxZoom: 16
+    L.tileLayer('https://mt1.google.com/vt/lyrs=y&x={x}&y={y}&z={z}', {
+      attribution: '&copy; Google Maps Satellite',
+      maxZoom: 18
     }).addTo(this.map);
 
     if (window.Chart) {
