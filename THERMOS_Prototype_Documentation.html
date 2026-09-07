@@ -8,7 +8,7 @@
 
     @page {
       size: A4;
-      margin: 18mm 18mm 18mm 18mm;
+      margin: 16mm 16mm 16mm 16mm;
     }
 
     * {
@@ -22,41 +22,34 @@
       color: #1e293b;
       background: #ffffff;
       line-height: 1.55;
-      font-size: 10.5pt;
+      font-size: 10pt;
       -webkit-print-color-adjust: exact;
       print-color-adjust: exact;
     }
 
-    /* PAGE BREAK HELPERS */
     .page-break {
       page-break-before: always;
       margin-top: 10px;
     }
 
-    .no-break {
-      break-inside: avoid;
-      page-break-inside: avoid;
-    }
-
-    /* HEADER & COVER STYLING */
     .doc-header {
       border-bottom: 3px solid #3b82f6;
-      padding-bottom: 16px;
-      margin-bottom: 24px;
+      padding-bottom: 14px;
+      margin-bottom: 20px;
       display: flex;
       justify-content: space-between;
       align-items: flex-end;
     }
 
     .brand-title {
-      font-size: 26pt;
+      font-size: 24pt;
       font-weight: 900;
       color: #0f172a;
       letter-spacing: -0.5px;
     }
 
     .brand-subtitle {
-      font-size: 12pt;
+      font-size: 11pt;
       font-weight: 600;
       color: #3b82f6;
       margin-top: 2px;
@@ -64,7 +57,7 @@
 
     .doc-meta {
       text-align: right;
-      font-size: 9pt;
+      font-size: 8.5pt;
       color: #64748b;
     }
 
@@ -72,48 +65,46 @@
       color: #0f172a;
     }
 
-    /* BADGES & HIGHLIGHTS */
     .sih-badge {
       display: inline-block;
       background: #0284c7;
       color: #ffffff;
       padding: 3px 10px;
       border-radius: 12px;
-      font-size: 8.5pt;
+      font-size: 8pt;
       font-weight: 700;
       letter-spacing: 0.5px;
       text-transform: uppercase;
-      margin-bottom: 8px;
+      margin-bottom: 6px;
     }
 
     .grid-2 {
       display: grid;
       grid-template-columns: 1fr 1fr;
-      gap: 16px;
-      margin: 14px 0;
+      gap: 14px;
+      margin: 12px 0;
     }
 
     .grid-3 {
       display: grid;
       grid-template-columns: 1fr 1fr 1fr;
-      gap: 12px;
-      margin: 14px 0;
+      gap: 10px;
+      margin: 12px 0;
     }
 
-    /* CARDS & SECTIONS */
     .section-title {
-      font-size: 14pt;
+      font-size: 13pt;
       font-weight: 800;
       color: #0f172a;
       border-left: 4px solid #3b82f6;
       padding-left: 10px;
-      margin: 22px 0 12px 0;
+      margin: 18px 0 10px 0;
       text-transform: uppercase;
       letter-spacing: 0.3px;
     }
 
     p {
-      margin-bottom: 10px;
+      margin-bottom: 8px;
       color: #334155;
       text-align: justify;
     }
@@ -122,27 +113,30 @@
       background: #f8fafc;
       border: 1px solid #e2e8f0;
       border-radius: 8px;
-      padding: 14px;
-      margin-bottom: 12px;
+      padding: 12px;
+      margin-bottom: 10px;
     }
 
-    .card-dark {
-      background: #0f172a;
-      color: #f8fafc;
-      border-radius: 8px;
-      padding: 16px;
-      margin: 14px 0;
+    .easy-step-card {
+      background: #f0fdf4;
+      border: 1px solid #bbf7d0;
+      border-left: 4px solid #16a34a;
+      border-radius: 6px;
+      padding: 12px;
+      margin-bottom: 10px;
     }
 
-    .card-dark h3, .card-dark p, .card-dark strong {
-      color: #f8fafc;
+    .easy-step-card h4 {
+      color: #15803d;
+      margin-bottom: 4px;
+      font-size: 10.5pt;
     }
 
     .highlight-box {
       background: #eff6ff;
       border-left: 4px solid #2563eb;
       padding: 12px;
-      margin: 12px 0;
+      margin: 10px 0;
       border-radius: 0 6px 6px 0;
     }
 
@@ -150,16 +144,15 @@
       background: #fff7ed;
       border-left: 4px solid #f97316;
       padding: 12px;
-      margin: 12px 0;
+      margin: 10px 0;
       border-radius: 0 6px 6px 0;
     }
 
-    /* TABLES */
     table {
       width: 100%;
       border-collapse: collapse;
-      margin: 12px 0;
-      font-size: 9.5pt;
+      margin: 10px 0;
+      font-size: 9pt;
     }
 
     th {
@@ -167,13 +160,13 @@
       color: #ffffff;
       font-weight: 700;
       text-align: left;
-      padding: 8px 10px;
-      font-size: 9pt;
+      padding: 7px 9px;
+      font-size: 8.5pt;
       text-transform: uppercase;
     }
 
     td {
-      padding: 8px 10px;
+      padding: 7px 9px;
       border-bottom: 1px solid #e2e8f0;
       color: #334155;
     }
@@ -182,33 +175,22 @@
       background: #f8fafc;
     }
 
-    /* CODE & FORMULAS */
-    code, pre {
-      font-family: 'JetBrains Mono', monospace;
-      background: #f1f5f9;
-      color: #0f172a;
-      padding: 2px 5px;
-      border-radius: 4px;
-      font-size: 9pt;
-    }
-
     .formula-block {
       background: #0f172a;
       color: #38bdf8;
       font-family: 'JetBrains Mono', monospace;
-      padding: 12px 16px;
+      padding: 10px 14px;
       border-radius: 6px;
-      margin: 10px 0;
-      font-size: 9.5pt;
-      line-height: 1.6;
+      margin: 8px 0;
+      font-size: 9pt;
+      line-height: 1.5;
     }
 
-    /* FOOTER */
     .doc-footer {
       border-top: 1px solid #cbd5e1;
-      padding-top: 10px;
-      margin-top: 24px;
-      font-size: 8.5pt;
+      padding-top: 8px;
+      margin-top: 20px;
+      font-size: 8pt;
       color: #94a3b8;
       display: flex;
       justify-content: space-between;
@@ -241,8 +223,8 @@
 
   <div class="grid-2">
     <div class="card">
-      <h4 style="color:#0284c7; margin-bottom:6px;">Current System Limitations</h4>
-      <ul style="padding-left:16px; font-size:9.5pt; color:#475569;">
+      <h4 style="color:#0284c7; margin-bottom:4px;">Current System Limitations</h4>
+      <ul style="padding-left:14px; font-size:9pt; color:#475569;">
         <li>Reliance on single-variable temperature thresholds.</li>
         <li>Lack of occupational safeguards for outdoor workers.</li>
         <li>No localized physiological risk adjustments for elderly/sick.</li>
@@ -250,8 +232,8 @@
       </ul>
     </div>
     <div class="card">
-      <h4 style="color:#16a34a; margin-bottom:6px;">THERMOS Breakthrough Solution</h4>
-      <ul style="padding-left:16px; font-size:9.5pt; color:#475569;">
+      <h4 style="color:#16a34a; margin-bottom:4px;">THERMOS Breakthrough Solution</h4>
+      <ul style="padding-left:14px; font-size:9pt; color:#475569;">
         <li>Multi-Index Fused Human Thermal Stress Score (HTSS).</li>
         <li>Personal Safeguard Calculator with work-rest interval engine.</li>
         <li>City-wise GIS Heat Map & Disaster Command Center.</li>
@@ -260,38 +242,47 @@
     </div>
   </div>
 
-  <div class="section-title">2. Scientific & Biometeorological Methodology</div>
-  <p>THERMOS synthesizes three globally validated thermal comfort and occupational heat stress indices:</p>
+  <div class="section-title">2. Simplified & Easy-to-Understand Formula Guide</div>
+  <p>To make complex biometeorological thermodynamics intuitive for judges, officials, and citizens, THERMOS breaks calculations down into 4 clear steps:</p>
 
-  <div class="card">
-    <h4 style="color:#0f172a; margin-bottom:4px;">A. Heat Index (HI) — NOAA/NWS Rothfusz Regression</h4>
-    <p style="font-size:9pt;">Models perceived temperature based on ambient air temperature ($T_F$ in $^\circ\text{F}$) and Relative Humidity ($RH$). Executes exact 9-term polynomial regression with low/high humidity boundary corrections:</p>
+  <div class="easy-step-card">
+    <h4>1. Heat Index (HI) — What the air "Feels Like" with Humidity</h4>
+    <p style="font-size:9pt;"><strong>Intuition:</strong> High humidity stops sweat from evaporating. When sweat cannot evaporate, your body traps heat internally.</p>
     <div class="formula-block">
-HI = -42.379 + 2.04901523·T + 10.14333127·RH - 0.22475541·T·RH
-     - 0.00683783·T² - 0.05481717·RH² + 0.00122874·T²·RH
-     + 0.00085282·T·RH² - 0.00000199·T²·RH²
+Step 1: Calculate basic heat = 0.5 × (Temp + 61.0 + (Temp - 68)×1.2 + Humidity×0.094)
+Step 2: If Temp >= 27°C, adjust for high moisture trapping using temperature-humidity multiplier.
     </div>
   </div>
 
-  <div class="card">
-    <h4 style="color:#0f172a; margin-bottom:4px;">B. Wet Bulb Globe Temperature (WBGT) — ISO 7243 Outdoor BoM Model</h4>
-    <p style="font-size:9pt;">The global standard for occupational and military physical training safety. Incorporates ambient vapor pressure ($e$) and solar radiation irradiance ($S_r$):</p>
+  <div class="easy-step-card">
+    <h4>2. Wet Bulb Globe Temperature (WBGT) — Outdoor Work Safety Index</h4>
+    <p style="font-size:9pt;"><strong>Intuition:</strong> Used by military & industries to prevent heat stroke during physical labor outdoors. It adds direct sunlight heating to air moisture.</p>
     <div class="formula-block">
-e = (RH / 100) · 6.105 · exp((17.27 · T_a) / (237.7 + T_a))
-sWBGT = 0.567 · T_a + 0.393 · e + 3.94 + (SolarRad > 100 ? SolarRad · 0.01 : 0)
+Vapor Pressure = (Humidity / 100) × 6.105 × e^((17.27 × Temp) / (237.7 + Temp))
+Base WBGT = 0.567 × Temp + 0.393 × Vapor Pressure + 3.94
+Sunlight Bonus = If in direct sun, add (Solar Radiation × 0.01) [Adds 3°C to 8°C under hot sun]
     </div>
   </div>
 
-  <div class="card">
-    <h4 style="color:#0f172a; margin-bottom:4px;">C. Universal Thermal Climate Index (UTCI) — Fiala Thermoregulation Model</h4>
-    <p style="font-size:9pt;">Calculates equivalent temperature based on multi-node human physiological body response, incorporating wind velocity at 10m height ($v_{10m}$) and Mean Radiant Temperature ($T_{mrt}$):</p>
+  <div class="easy-step-card">
+    <h4>3. Universal Thermal Climate Index (UTCI) — Body Response Index</h4>
+    <p style="font-size:9pt;"><strong>Intuition:</strong> Simulates how blood circulation, sweating, and skin temperature react to wind and sun.</p>
     <div class="formula-block">
-T_mrt = T_a + 0.08 · SolarRad - 1.2 · sqrt(v_ms)
-UTCI = T_a + 0.2·(T_mrt - T_a) - 0.1·v_ms + 0.05·RH
+Sun & Wind Adjustment = Air Temp + (0.08 × Solar Radiation) - (1.2 × √Wind Speed)
+Final UTCI = Air Temp + 0.2×(Radiant Temp - Air Temp) - 0.1×Wind Speed + 0.05×Humidity
     </div>
   </div>
 
-  <!-- PAGE 2: HTSS FORMULA & SYSTEM ARCHITECTURE -->
+  <div class="easy-step-card">
+    <h4>4. Human Thermal Stress Score (HTSS) — Fused Master Score (0 to 100)</h4>
+    <p style="font-size:9pt;"><strong>Intuition:</strong> Combines all 3 indices with a <strong>Safety Guardrail</strong> so severe heat on any single index cannot be hidden.</p>
+    <div class="formula-block">
+Weighted Score = (45% × UTCI Score) + (35% × WBGT Score) + (20% × Heat Index Score)
+Safety Guardrail = HTSS = Maximum of [Weighted Score, 0.85 × Highest Individual Sub-Score]
+    </div>
+  </div>
+
+  <!-- PAGE 2: HTSS MATRIX & SYSTEM ARCHITECTURE -->
   <div class="page-break"></div>
 
   <div class="doc-header">
@@ -304,13 +295,7 @@ UTCI = T_a + 0.2·(T_mrt - T_a) - 0.1·v_ms + 0.05·RH
     </div>
   </div>
 
-  <div class="section-title">3. Human Thermal Stress Score (HTSS) & Safety Guardrail</div>
-  <p>Individual normalized sub-scores ($N_{HI}, N_{WBGT}, N_{UTCI}$) are scaled onto a $0-100$ strain spectrum. THERMOS applies a weighted fusion formula protected by a <strong>Non-Compensatory Safeguard Guardrail</strong> so that severe heat on any single index cannot be hidden by lower values in another:</p>
-
-  <div class="formula-block">
-WeightedScore = 0.45 · N_UTCI + 0.35 · N_WBGT + 0.20 · N_HI
-HTSS = Math.max(WeightedScore, 0.85 · Math.max(N_HI, N_WBGT, N_UTCI))
-  </div>
+  <div class="section-title">3. HTSS Risk Spectrum & Action Table</div>
 
   <table>
     <thead>
@@ -361,7 +346,7 @@ HTSS = Math.max(WeightedScore, 0.85 · Math.max(N_HI, N_WBGT, N_UTCI))
   <div class="grid-2">
     <div class="card">
       <h4 style="color:#0f172a;">Technology Stack</h4>
-      <ul style="padding-left:16px; font-size:9pt; margin-top:6px;">
+      <ul style="padding-left:14px; font-size:8.5pt; margin-top:4px;">
         <li><strong>Frontend Logic:</strong> Vanilla JavaScript (ES6+ Class Architecture).</li>
         <li><strong>Styling System:</strong> CSS3 Glassmorphism with HSL ambient glowing mesh tokens.</li>
         <li><strong>GIS Mapping:</strong> Leaflet.js 1.9.4 with Esri Dark Canvas basemap.</li>
@@ -371,7 +356,7 @@ HTSS = Math.max(WeightedScore, 0.85 · Math.max(N_HI, N_WBGT, N_UTCI))
     </div>
     <div class="card">
       <h4 style="color:#0f172a;">Data Flow Architecture</h4>
-      <ol style="padding-left:16px; font-size:9pt; margin-top:6px;">
+      <ol style="padding-left:14px; font-size:8.5pt; margin-top:4px;">
         <li>User selects city or triggers GPS Geolocation API.</li>
         <li>App executes asynchronous fetch to Open-Meteo REST endpoints.</li>
         <li>Raw hourly arrays are piped into `ThermalStressEngine`.</li>
@@ -387,15 +372,15 @@ HTSS = Math.max(WeightedScore, 0.85 · Math.max(N_HI, N_WBGT, N_UTCI))
   <div class="grid-3">
     <div class="card" style="text-align:center;">
       <strong style="color:#eab308;">☀️ 3D Sun Icon</strong>
-      <p style="font-size:8.5pt; margin-top:4px;">Triggered when $T \ge 38^\circ\text{C}$. Represents sunny heatwave conditions.</p>
+      <p style="font-size:8pt; margin-top:3px;">Triggered when $T \ge 38^\circ\text{C}$. Represents sunny heatwave conditions.</p>
     </div>
     <div class="card" style="text-align:center;">
       <strong style="color:#0284c7;">🌧️ 3D Rain Cloud</strong>
-      <p style="font-size:8.5pt; margin-top:4px;">Triggered when Rain Codes or $RH > 85\%$. Translucent water drops animation.</p>
+      <p style="font-size:8pt; margin-top:3px;">Triggered when Rain Codes or $RH > 85\%$. Translucent water drops animation.</p>
     </div>
     <div class="card" style="text-align:center;">
       <strong style="color:#a855f7;">⚡ 3D Storm Cloud</strong>
-      <p style="font-size:8.5pt; margin-top:4px;">Triggered for Extreme Risk or $T \ge 44^\circ\text{C}$. Dark lightning elements.</p>
+      <p style="font-size:8pt; margin-top:3px;">Triggered for Extreme Risk or $T \ge 44^\circ\text{C}$. Dark lightning elements.</p>
     </div>
   </div>
 
@@ -454,7 +439,7 @@ HTSS = Math.max(WeightedScore, 0.85 · Math.max(N_HI, N_WBGT, N_UTCI))
 
   <div class="warning-box">
     <strong>Calculated Action Outputs:</strong> The calculator outputs exact personalized guidelines:
-    <ul style="padding-left:16px; margin-top:4px; font-size:9pt;">
+    <ul style="padding-left:14px; margin-top:4px; font-size:8.5pt;">
       <li><strong>Max Safe Outdoor Duration:</strong> Continuous limit (e.g. 45 minutes before forced break).</li>
       <li><strong>Hydration Rate:</strong> Recommended fluid consumption (e.g. 0.85 Liters/hour ORS/water).</li>
       <li><strong>Mandatory Rest Interval:</strong> Shadow cooling break requirement (e.g. 15 mins rest per 45 mins work).</li>
@@ -463,7 +448,7 @@ HTSS = Math.max(WeightedScore, 0.85 · Math.max(N_HI, N_WBGT, N_UTCI))
 
   <div class="section-title">7. Government Command Center & Disaster Management Matrix</div>
   <p>Designed for District Magistrates, State Disaster Management Authorities (SDMAs), and NDMA emergency response units:</p>
-  <ul style="padding-left:16px; font-size:9.5pt; color:#334155; margin-bottom:12px;">
+  <ul style="padding-left:14px; font-size:9pt; color:#334155; margin-bottom:10px;">
     <li><strong>City-wise Risk Ranking Table:</strong> Real-time table sorting 35 major Indian cities across plains, coastal, and hilly regions by HTSS, population exposure, and alert level.</li>
     <li><strong>State Vulnerability Assessment:</strong> Multi-factor radar metrics evaluating Elderly %, Outdoor Worker %, Poverty Density, and Healthcare Capacity Deficit.</li>
     <li><strong>Hospital Load Projections:</strong> Predictive 3-5 day hospitalization rate index (per 100k population) enabling proactive medical supply allocation.</li>
