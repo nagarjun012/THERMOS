@@ -67,26 +67,6 @@ SIH26083/
 - Node.js 18+
 - PostgreSQL 14+ (optional — SQLite fallback for demo)
 
-#### Backend Setup
-```bash
-cd backend
-python -m venv venv
-
-# Windows
-venv\Scripts\activate
-# Linux/Mac
-source venv/bin/activate
-
-pip install -r requirements.txt
-cp .env.example .env
-uvicorn app.main:app --reload --port 8000
-```
-
-#### Frontend Setup
-```bash
-cd frontend
-npm install
-npm run dev
 ```
 
 ### 🧪 Demo Mode
